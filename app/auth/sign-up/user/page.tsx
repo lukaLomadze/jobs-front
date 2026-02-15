@@ -53,6 +53,10 @@ export default function SignUpUserPage() {
     }
   };
 
+  const handleGoogleSignUp = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
+  };
+
   return (
     <div className="container flex min-h-[80vh] items-center justify-center py-8">
       <Card className="w-full max-w-sm">
@@ -87,6 +91,14 @@ export default function SignUpUserPage() {
           <CardFooter className="flex flex-col gap-2">
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating..." : "Create account"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleGoogleSignUp}
+            >
+              Sign up with Google
             </Button>
             <Link href="/auth/sign-up" className="text-sm text-muted-foreground underline">
               Back to sign up options
