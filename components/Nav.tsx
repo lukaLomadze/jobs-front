@@ -60,7 +60,9 @@ export function Nav() {
                 </Button>
               </Link>
               <Link href="/auth/sign-up">
-                <Button size="sm" className="font-medium">Sign Up</Button>
+                <Button size="sm" className="font-medium">
+                  Sign Up
+                </Button>
               </Link>
             </>
           )}
@@ -71,7 +73,12 @@ export function Nav() {
                   My Applications
                 </Button>
               </Link>
-              <Button variant="ghost" size="sm" className="font-medium" onClick={handleLogout}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="font-medium"
+                onClick={handleLogout}
+              >
                 Logout
               </Button>
             </>
@@ -83,7 +90,12 @@ export function Nav() {
                   Dashboard
                 </Button>
               </Link>
-              <Button variant="ghost" size="sm" className="font-medium" onClick={handleLogout}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="font-medium"
+                onClick={handleLogout}
+              >
                 Logout
               </Button>
             </>
@@ -99,7 +111,12 @@ export function Nav() {
                   Admin
                 </Button>
               </Link>
-              <Button variant="ghost" size="sm" className="font-medium" onClick={handleLogout}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="font-medium"
+                onClick={handleLogout}
+              >
                 Logout
               </Button>
             </>

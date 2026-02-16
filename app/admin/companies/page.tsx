@@ -39,9 +39,7 @@ export default function AdminCompaniesPage() {
     try {
       await axiosInstance.patch(`/companies/${id}/approve`);
       setCompanies((prev) =>
-        prev.map((c) =>
-          c._id === id ? { ...c, isApproved: true } : c
-        )
+        prev.map((c) => (c._id === id ? { ...c, isApproved: true } : c)),
       );
     } catch {}
   };
@@ -50,9 +48,7 @@ export default function AdminCompaniesPage() {
     try {
       await axiosInstance.patch(`/companies/${id}/ban`);
       setCompanies((prev) =>
-        prev.map((c) =>
-          c._id === id ? { ...c, isApproved: false } : c
-        )
+        prev.map((c) => (c._id === id ? { ...c, isApproved: false } : c)),
       );
     } catch {}
   };
@@ -60,99 +56,108 @@ export default function AdminCompaniesPage() {
   if (!token) return null;
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+    <div className="space-y-5">
+      <div className="au">
+        <h1 className="text-2xl font-extrabold text-slate-100 tracking-tight">
           All companies
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Approve or ban any company. Page {page}.
+        <p className="text-slate-500 text-sm mt-1">
+          Approve or ban any company · Page {page}
         </p>
       </div>
-
       {loading ? (
-        <p className="text-muted-foreground">Loading...</p>
+        <div className="uc p-5 space-y-2">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="sk h-14" />
+          ))}
+        </div>
       ) : (
-        <Card className="overflow-hidden border-border/80 shadow-sm">
-          <CardHeader className="bg-muted/40">
-            <CardTitle>Companies</CardTitle>
-            <CardDescription>Full list of registered companies</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-4">
-            {companies.length === 0 ? (
-              <p className="rounded-lg border border-dashed border-border/80 py-12 text-center text-sm text-muted-foreground">
-                No companies found.
-              </p>
-            ) : (
-              <ul className="divide-y divide-border/80">
-                {companies.map((c) => (
-                  <li
-                    key={c._id}
-                    className="flex flex-wrap items-center justify-between gap-4 py-4 first:pt-0"
-                  >
-                    <div className="min-w-0">
-                      <p className="font-medium text-foreground">{c.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {c.email}
+        <div className="uc overflow-hidden au d1">
+          {companies.length === 0 ? (
+            <p className="py-12 text-center text-sm text-slate-500">
+              No companies found.
+            </p>
+          ) : (
+            <div className="p-4 space-y-2">
+              {companies.map((c) => (
+                <div
+                  key={c._id}
+                  className="flex flex-wrap items-center justify-between gap-4 p-3.5 rounded-xl"
+                  style={{
+                    background: "rgba(26,41,66,.5)",
+                    border: "1px solid rgba(59,130,246,.08)",
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-blue-400 text-sm"
+                      style={{
+                        background: "linear-gradient(135deg,#1a2942,#1e3560)",
+                        border: "1px solid rgba(59,130,246,.2)",
+                      }}
+                    >
+                      {c.name[0]?.toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-200 text-sm">
+                        {c.name}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {c.email}{" "}
                         <span
-                          className={
-                            c.isApproved
-                              ? "ml-2 text-green-600 dark:text-green-400"
-                              : "ml-2 text-amber-600 dark:text-amber-400"
-                          }
+                          className={`ml-1 tg text-[.62rem] ${c.isApproved ? "tg2" : "ty"}`}
                         >
-                          · {c.isApproved ? "Approved" : "Not approved"}
+                          {c.isApproved ? "✓ Approved" : "⏳ Not approved"}
                         </span>
                       </p>
                     </div>
-                    <div className="flex shrink-0 gap-2">
-                      {!c.isApproved && (
-                        <Button
-                          size="sm"
-                          onClick={() => approve(c._id)}
-                          className="bg-primary text-primary-foreground"
-                        >
-                          Approve
-                        </Button>
-                      )}
-                      {c.isApproved && (
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => ban(c._id)}
-                        >
-                          Ban
-                        </Button>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-            {companies.length >= take && (
-              <div className="mt-6 flex justify-center gap-2 border-t border-border/80 pt-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={page <= 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                >
-                  Previous
-                </Button>
-                <span className="flex items-center px-4 text-sm text-muted-foreground">
-                  Page {page}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  Next
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  </div>
+                  <div className="flex gap-2">
+                    {!c.isApproved && (
+                      <button
+                        className="bp px-3.5 py-1.5 text-xs"
+                        onClick={() => approve(c._id)}
+                      >
+                        Approve
+                      </button>
+                    )}
+                    {c.isApproved && (
+                      <button
+                        className="bd px-3.5 py-1.5 text-xs"
+                        onClick={() => ban(c._id)}
+                      >
+                        Ban
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {companies.length >= take && (
+            <div
+              className="flex justify-center gap-2 p-4 border-t"
+              style={{ borderColor: "rgba(59,130,246,.08)" }}
+            >
+              <button
+                className="bg px-4 py-2 text-xs"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+              >
+                ← Previous
+              </button>
+              <span className="px-3 py-2 text-xs text-slate-500">
+                Page {page}
+              </span>
+              <button
+                className="bg px-4 py-2 text-xs"
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Next →
+              </button>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
