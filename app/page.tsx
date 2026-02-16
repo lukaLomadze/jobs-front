@@ -1,6 +1,6 @@
 'use client';
 import { Suspense } from "react";
-import HomePage from "./Homepage";
+import HomePage from "./HomePage";
 
 
 export default function Page() {
