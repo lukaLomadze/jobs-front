@@ -25,6 +25,8 @@ export default function AdminPage() {
   const token = getCookie("token") as string | undefined;
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
 
+  const [error, setError] = useState<string | null>(null);
+
   const [pendingCompanies, setPendingCompanies] = useState<Company[]>([]);
   const [allCompanies, setAllCompanies] = useState<Company[]>([]);
   const [companiesPage, setCompaniesPage] = useState(1);
@@ -59,17 +61,25 @@ export default function AdminPage() {
   // Load admin data only when we know user is admin
   useEffect(() => {
     if (!token || isAdmin !== true) return;
+    setError(null);
     Promise.all([
       axiosInstance.get("/companies/pending"),
       axiosInstance.get("/vacancies/admin/pending"),
-      axiosInstance.get("/companies", { params: { page: 1, take: 200 } }),
+      axiosInstance.get("/companies", { params: { page: 1, take: 20 } }),
     ])
       .then(([pendingRes, vacanciesRes, companiesRes]) => {
+        console.log(pendingRes, 999999)
+        console.log(vacanciesRes, 999999)
+        console.log(companiesRes, 999999)
         setPendingCompanies(pendingRes.data ?? []);
         setPendingVacancies(vacanciesRes.data ?? []);
         setCompanyList(companiesRes.data ?? []);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("Failed to load admin data:", err);
+        const message = err.response?.data?.message || err.message || "Failed to load admin data";
+        setError(message);
+      });
   }, [token, isAdmin]);
 
   // Load all companies (paginated)
@@ -81,7 +91,9 @@ export default function AdminPage() {
         params: { page: companiesPage, take: companiesTake },
       })
       .then((res) => setAllCompanies(res.data ?? []))
-      .catch(() => setAllCompanies([]))
+      .catch((err) => {
+        console.error("Failed to load companies:", err);
+      })
       .finally(() => setLoadingCompanies(false));
   }, [token, isAdmin, companiesPage]);
 
@@ -95,7 +107,9 @@ export default function AdminPage() {
     axiosInstance
       .get("/applications/admin", { params })
       .then((res) => setApplications(res.data ?? []))
-      .catch(() => setApplications([]))
+      .catch((err) => {
+        console.error("Failed to load applications:", err);
+      })
       .finally(() => setLoadingApplications(false));
   }, [token, isAdmin, applicationsCompanyId]);
 
@@ -106,7 +120,7 @@ export default function AdminPage() {
       setAllCompanies((prev) =>
         prev.map((c) => (c._id === id ? { ...c, isApproved: true } : c)),
       );
-    } catch {}
+    } catch { }
   };
 
   const banCompany = async (id: string) => {
@@ -116,21 +130,32 @@ export default function AdminPage() {
       setAllCompanies((prev) =>
         prev.map((c) => (c._id === id ? { ...c, isApproved: false } : c)),
       );
-    } catch {}
+    } catch { }
   };
 
   const approveVacancy = async (id: string) => {
     try {
       await axiosInstance.patch(`/vacancies/admin/${id}/approve`);
       setPendingVacancies((prev) => prev.filter((v) => v._id !== id));
-    } catch {}
+    } catch { }
   };
 
   const rejectVacancy = async (id: string) => {
     try {
       await axiosInstance.patch(`/vacancies/admin/${id}/reject`);
       setPendingVacancies((prev) => prev.filter((v) => v._id !== id));
-    } catch {}
+    } catch { }
+  };
+
+  const openCv = async (cvFileUrl: string) => {
+    try {
+      const res = await axiosInstance.get('/applications/cv-url', {
+        params: { fileKey: cvFileUrl },
+      });
+      window.open(res.data.url, '_blank');
+    } catch (err) {
+      console.error('Failed to open CV:', err);
+    }
   };
 
   if (!token) return null;
@@ -160,6 +185,11 @@ export default function AdminPage() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+          ⚠️ {error}
+        </div>
+      )}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 au">
         {[
           {
@@ -490,14 +520,12 @@ export default function AdminPage() {
                           : ""}
                       </p>
                     </div>
-                    <a
-                      href={app.cvFileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={() => openCv(app.cvFileUrl)}
                       className="bg px-3.5 py-1.5 text-xs"
                     >
                       📄 CV
-                    </a>
+                    </button>
                   </div>
                 );
               })}

@@ -25,6 +25,17 @@ export default function CompanyApplicationsPage() {
   const [applications, setApplications] = useState<AppWithUser[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const openCv = async (cvFileUrl: string) => {
+    try {
+      const res = await axiosInstance.get('/applications/cv-url', {
+        params: { fileKey: cvFileUrl },
+      });
+      window.open(res.data.url, '_blank');
+    } catch (err) {
+      console.error('Failed to open CV:', err);
+    }
+  };
+
   useEffect(() => {
     if (!token) {
       router.push("/auth/sign-in");
@@ -108,14 +119,12 @@ export default function CompanyApplicationsPage() {
                 </div>
                 <p className="text-sm text-slate-500">
                   CV:{" "}
-                  <a
-                    href={app.cvFileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={() => openCv(app.cvFileUrl)}
                     className="text-blue-400 hover:underline font-semibold"
                   >
                     Open PDF
-                  </a>
+                  </button>
                 </p>
               </div>
             );
