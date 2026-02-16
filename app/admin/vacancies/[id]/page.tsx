@@ -49,58 +49,79 @@ export default function AdminVacancyDetailPage() {
     } catch {}
   };
 
-  if (!token) return null;
-  if (loading) return <p className="text-muted-foreground">Loading...</p>;
-  if (!vacancy) return <p className="text-muted-foreground">Vacancy not found.</p>;
+  if (!vacancy)
+    return <p className="text-muted-foreground">Vacancy not found.</p>;
 
-  const company = typeof vacancy.companyId === "object" ? vacancy.companyId : null;
+  const company =
+    typeof vacancy.companyId === "object" ? vacancy.companyId : null;
+
+  if (!token) return null;
+  if (loading)
+    return (
+      <div className="space-y-4 py-4 max-w-xl">
+        <div className="sk h-4 w-20" />
+        <div className="uc p-7 space-y-4">
+          <div className="sk h-6 w-3/5" />
+          <div className="sk h-4 w-2/5" />
+          <div className="sk h-3 w-full mt-3" />
+          <div className="sk h-3 w-5/6" />
+        </div>
+      </div>
+    );
 
   return (
-    <div className="space-y-6">
-      <Link href="/admin" className="text-sm text-muted-foreground hover:underline">
+    <div className="space-y-5 max-w-xl">
+      <Link
+        href="/admin"
+        className="text-xs text-slate-500 hover:text-blue-400 transition-colors inline-block"
+      >
         ← Back to admin
       </Link>
-      <Card className="border-border/80 shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-xl">{vacancy.title}</CardTitle>
-          <CardDescription>
-            {vacancy.location} · {vacancy.category}
-            {vacancy.salaryMin != null || vacancy.salaryMax != null
-              ? ` · ${vacancy.salaryMin ?? "?"} - ${vacancy.salaryMax ?? "?"}`
-              : ""}
-          </CardDescription>
-          {company && (
-            <p className="text-sm text-muted-foreground">
-              Company: {(company as Company).name}
-            </p>
-          )}
-          <span
-            className={`inline-block rounded-md px-2 py-1 text-xs font-medium ${
-              vacancy.status === "approved"
-                ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                : "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
-            }`}
-          >
-            {vacancy.status}
-          </span>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="uc p-7 as">
+        <div className="flex items-start justify-between flex-wrap gap-3 mb-5">
           <div>
-            <p className="text-sm font-medium text-foreground">Description</p>
-            <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">
-              {vacancy.description}
-            </p>
-          </div>
-          {vacancy.status === "pending" && (
-            <div className="flex gap-2 pt-4">
-              <Button onClick={approve}>Approve</Button>
-              <Button variant="destructive" onClick={reject}>
-                Reject
-              </Button>
+            <h1 className="text-xl font-extrabold text-slate-100 tracking-tight mb-2">
+              {vacancy.title}
+            </h1>
+            <div className="flex flex-wrap gap-2">
+              {vacancy.location && (
+                <span className="tg tb">📍 {vacancy.location}</span>
+              )}
+              {vacancy.category && (
+                <span className="tg tv">🏷 {vacancy.category}</span>
+              )}
+              {company && (
+                <span className="tg tb">🏢 {(company as Company).name}</span>
+              )}
+              <span
+                className={`tg ${vacancy.status === "approved" ? "tg2" : "ty"}`}
+              >
+                {vacancy.status}
+              </span>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        </div>
+
+        <div
+          className="h-px mb-5"
+          style={{ background: "rgba(59,130,246,.1)" }}
+        />
+        <p className="lbl">DESCRIPTION</p>
+        <p className="mt-1 whitespace-pre-wrap text-sm text-slate-400 leading-relaxed mb-6">
+          {vacancy.description}
+        </p>
+
+        {vacancy.status === "pending" && (
+          <div className="flex gap-3">
+            <button onClick={approve} className="bp flex-1 py-3 text-sm">
+              ✓ Approve
+            </button>
+            <button onClick={reject} className="bd flex-1 py-3 text-sm">
+              ✕ Reject
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

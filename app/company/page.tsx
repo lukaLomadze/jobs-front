@@ -44,14 +44,19 @@ export default function CompanyDashboardPage() {
         </Link>
       </div>
       <div className="mb-4">
-        <Link href="/company/applications" className="text-sm text-muted-foreground hover:underline">
+        <Link
+          href="/company/applications"
+          className="text-sm text-muted-foreground hover:underline"
+        >
           View all applications →
         </Link>
       </div>
       {loading ? (
         <p className="text-muted-foreground">Loading...</p>
       ) : vacancies.length === 0 ? (
-        <p className="text-muted-foreground">No vacancies yet. Create one to get started.</p>
+        <p className="text-muted-foreground">
+          No vacancies yet. Create one to get started.
+        </p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {vacancies.map((v) => (

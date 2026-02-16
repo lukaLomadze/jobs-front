@@ -51,83 +51,77 @@ export default function AdminApplicationsPage() {
   if (!token) return null;
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+    <div className="space-y-5">
+      <div className="au">
+        <h1 className="text-2xl font-extrabold text-slate-100 tracking-tight">
           All applications
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-slate-500 text-sm mt-1">
           View applications globally or filter by company.
         </p>
       </div>
 
-      <Card className="border-border/80 shadow-sm">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">Filter by company</CardTitle>
-          <CardDescription>Leave empty to see all applications</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <select
-            className="w-full max-w-xs rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            value={companyId}
-            onChange={(e) => setCompanyId(e.target.value)}
-          >
-            <option value="">All companies</option>
-            {companies.map((c) => (
-              <option key={c._id} value={c._id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </CardContent>
-      </Card>
+      <div className="uc p-5 au d1">
+        <label className="lbl">FILTER BY COMPANY</label>
+        <select
+          className="ui max-w-xs text-sm"
+          value={companyId}
+          onChange={(e) => setCompanyId(e.target.value)}
+        >
+          <option value="">All companies</option>
+          {companies.map((c) => (
+            <option key={c._id} value={c._id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {loading ? (
-        <p className="text-muted-foreground">Loading applications...</p>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="uc p-5">
+              <div className="sk h-4 w-2/5 mb-2" />
+              <div className="sk h-3 w-3/5" />
+            </div>
+          ))}
+        </div>
       ) : applications.length === 0 ? (
-        <Card className="border-border/80">
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
-            No applications found.
-          </CardContent>
-        </Card>
+        <div className="uc p-12 text-center as">
+          <p className="text-4xl mb-2">📭</p>
+          <p className="text-slate-400 font-semibold">No applications found.</p>
+        </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {applications.map((app) => {
             const user = app.userId as User;
             const vacancy = app.vacancyId as Vacancy & { companyId?: Company };
             const company = vacancy?.companyId as Company | undefined;
             return (
-              <Card
+              <div
                 key={app._id}
-                className="overflow-hidden border-border/80 shadow-sm transition-colors hover:bg-muted/20"
+                className="uc p-5 flex flex-wrap items-center justify-between gap-3 au"
               >
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">{vacancy?.title}</CardTitle>
-                  <CardDescription>
-                    <span className="font-medium text-foreground">
-                      {user?.fullName}
-                    </span>{" "}
-                    ({user?.email}) ·{" "}
-                    {company?.name ?? "Company"} ·{" "}
+                <div>
+                  <p className="font-semibold text-slate-200 text-sm">
+                    {vacancy?.title}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {user?.fullName} ({user?.email}) · {company?.name ?? "—"} ·{" "}
                     {app.createdAt
                       ? new Date(app.createdAt).toLocaleDateString()
                       : ""}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    CV:{" "}
-                    <a
-                      href={app.cvFileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline"
-                    >
-                      Open PDF
-                    </a>
                   </p>
-                </CardContent>
-              </Card>
+                </div>
+                <a
+                  href={app.cvFileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg px-3.5 py-1.5 text-xs"
+                >
+                  📄 Open PDF
+                </a>
+              </div>
             );
           })}
         </div>

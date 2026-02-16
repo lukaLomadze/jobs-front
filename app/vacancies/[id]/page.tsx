@@ -61,8 +61,36 @@ export default function VacancyDetailPage() {
     }
   };
 
-  if (loading) return <div className="container py-8">Loading...</div>;
-  if (!vacancy) return <div className="container py-8">Vacancy not found.</div>;
+  if (loading)
+    return (
+      <div className="container py-8 max-w-2xl mx-auto space-y-4">
+        <div className="sk h-4 w-20 rounded-xl" />
+        <div className="uc p-7 space-y-4">
+          <div className="flex gap-4">
+            <div className="sk w-14 h-14 rounded-xl" />
+            <div className="flex-1 space-y-2.5">
+              <div className="sk h-6 w-3/5" />
+              <div className="sk h-4 w-2/5" />
+            </div>
+          </div>
+          <div className="sk h-3 w-full" />
+          <div className="sk h-3 w-5/6" />
+          <div className="sk h-3 w-4/6" />
+        </div>
+      </div>
+    );
+  if (!vacancy)
+    return (
+      <div className="container py-10 text-center">
+        <div className="uc p-12 max-w-sm mx-auto as">
+          <p className="text-4xl mb-3">🔍</p>
+          <h2 className="font-bold text-slate-200 mb-2">Vacancy not found</h2>
+          <Link href="/">
+            <button className="bg px-5 py-2 text-sm mt-2">← Browse jobs</button>
+          </Link>
+        </div>
+      </div>
+    );
 
   const companyName =
     typeof vacancy.companyId === "object" && vacancy.companyId?.name
@@ -70,51 +98,106 @@ export default function VacancyDetailPage() {
       : "Company";
 
   return (
-    <div className="container py-8">
-      <Link href="/" className="text-sm text-muted-foreground hover:underline">
+    <div className="container py-8 max-w-2xl mx-auto">
+      <Link
+        href="/"
+        className="text-xs text-slate-500 hover:text-blue-400 transition-colors mb-6 inline-block"
+      >
         ← Back to vacancies
       </Link>
-      <Card className="mt-4">
-        <CardHeader>
-          <CardTitle className="text-2xl">{vacancy.title}</CardTitle>
-          <CardDescription>
-            {companyName} · {vacancy.location}
-            {vacancy.category ? ` · ${vacancy.category}` : ""}
-            {(vacancy.salaryMin != null || vacancy.salaryMax != null) && (
-              <> · Salary: {vacancy.salaryMin ?? "?"} - {vacancy.salaryMax ?? "?"}</>
-            )}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="whitespace-pre-wrap text-muted-foreground">
-            {vacancy.description}
+
+      <div className="uc p-7 mb-4 au">
+        <div className="flex gap-4 items-start mb-5">
+          <div
+            className="w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-xl text-blue-400"
+            style={{
+              background: "linear-gradient(135deg,#1a2942,#1e3560)",
+              border: "1px solid rgba(59,130,246,.22)",
+            }}
+          >
+            {companyName[0]?.toUpperCase()}
+          </div>
+          <div>
+            <h1 className="text-xl font-extrabold text-slate-100 tracking-tight leading-snug">
+              {vacancy.title}
+            </h1>
+            <p className="text-slate-500 text-sm mt-0.5">
+              {companyName} · {vacancy.location}
+              {vacancy.category ? ` · ${vacancy.category}` : ""}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2 mb-5">
+          {vacancy.location && (
+            <span className="tg tb">📍 {vacancy.location}</span>
+          )}
+          {vacancy.category && (
+            <span className="tg tv">🏷 {vacancy.category}</span>
+          )}
+          {(vacancy.salaryMin != null || vacancy.salaryMax != null) && (
+            <span className="tg tg2">
+              💰 {vacancy.salaryMin ?? "?"}–{vacancy.salaryMax ?? "?"}
+            </span>
+          )}
+        </div>
+
+        <div
+          className="h-px mb-5"
+          style={{ background: "rgba(59,130,246,.1)" }}
+        />
+        <p className="lbl">DESCRIPTION</p>
+        <p className="whitespace-pre-wrap text-slate-400 text-sm leading-relaxed">
+          {vacancy.description}
+        </p>
+      </div>
+
+      {token && (
+        <div className="uc p-7 au d2">
+          <h2 className="font-bold text-slate-100 mb-1">Apply for this role</h2>
+          <p className="text-slate-500 text-xs mb-5">
+            Upload your CV as a PDF to apply instantly
           </p>
-        </CardContent>
-        {token && (
-          <CardFooter>
-            <form onSubmit={handleApply} className="flex w-full flex-wrap items-end gap-4">
-              <div className="flex-1 space-y-2 min-w-[200px]">
-                <label className="text-sm font-medium">Upload CV (PDF)</label>
-                <Input
-                  type="file"
-                  accept=".pdf,application/pdf"
-                  onChange={(e) => setCvFile(e.target.files?.[0] ?? null)}
-                />
-              </div>
-              <Button type="submit" disabled={!cvFile || applyLoading}>
-                {applyLoading ? "Sending..." : "Apply"}
-              </Button>
-            </form>
-          </CardFooter>
-        )}
-        {!token && (
-          <CardFooter>
-            <Link href="/auth/sign-in">
-              <Button>Sign in to apply</Button>
-            </Link>
-          </CardFooter>
-        )}
-      </Card>
+          <form
+            onSubmit={handleApply}
+            className="flex w-full flex-wrap items-end gap-4"
+          >
+            <div className="flex-1 space-y-2 min-w-[200px]">
+              <label className="lbl">UPLOAD CV (PDF)</label>
+              <input
+                className="ui"
+                type="file"
+                accept=".pdf,application/pdf"
+                onChange={(e) => setCvFile(e.target.files?.[0] ?? null)}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={!cvFile || applyLoading}
+              className="bp px-6 py-2.5 text-sm"
+            >
+              {applyLoading ? (
+                <>
+                  <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white sp" />
+                  Sending…
+                </>
+              ) : (
+                "Apply 🚀"
+              )}
+            </button>
+          </form>
+        </div>
+      )}
+      {!token && (
+        <div className="uc p-7 text-center au d2">
+          <p className="text-slate-500 text-sm mb-4">
+            Sign in to apply for this position
+          </p>
+          <Link href="/auth/sign-in">
+            <button className="bp px-6 py-2.5 text-sm">Sign in to apply</button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

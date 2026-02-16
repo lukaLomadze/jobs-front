@@ -31,7 +31,8 @@ export default function AdminPage() {
   const [pendingVacancies, setPendingVacancies] = useState<Vacancy[]>([]);
   const [applications, setApplications] = useState<AppWithPopulated[]>([]);
   const [companyList, setCompanyList] = useState<Company[]>([]);
-  const [applicationsCompanyId, setApplicationsCompanyId] = useState<string>("");
+  const [applicationsCompanyId, setApplicationsCompanyId] =
+    useState<string>("");
 
   const [loadingAuth, setLoadingAuth] = useState(true);
   const [loadingCompanies, setLoadingCompanies] = useState(false);
@@ -76,7 +77,9 @@ export default function AdminPage() {
     if (!token || isAdmin !== true) return;
     setLoadingCompanies(true);
     axiosInstance
-      .get("/companies", { params: { page: companiesPage, take: companiesTake } })
+      .get("/companies", {
+        params: { page: companiesPage, take: companiesTake },
+      })
       .then((res) => setAllCompanies(res.data ?? []))
       .catch(() => setAllCompanies([]))
       .finally(() => setLoadingCompanies(false));
@@ -86,7 +89,9 @@ export default function AdminPage() {
   useEffect(() => {
     if (!token || isAdmin !== true) return;
     setLoadingApplications(true);
-    const params = applicationsCompanyId ? { companyId: applicationsCompanyId } : {};
+    const params = applicationsCompanyId
+      ? { companyId: applicationsCompanyId }
+      : {};
     axiosInstance
       .get("/applications/admin", { params })
       .then((res) => setApplications(res.data ?? []))
@@ -99,7 +104,7 @@ export default function AdminPage() {
       await axiosInstance.patch(`/companies/${id}/approve`);
       setPendingCompanies((prev) => prev.filter((c) => c._id !== id));
       setAllCompanies((prev) =>
-        prev.map((c) => (c._id === id ? { ...c, isApproved: true } : c))
+        prev.map((c) => (c._id === id ? { ...c, isApproved: true } : c)),
       );
     } catch {}
   };
@@ -109,7 +114,7 @@ export default function AdminPage() {
       await axiosInstance.patch(`/companies/${id}/ban`);
       setPendingCompanies((prev) => prev.filter((c) => c._id !== id));
       setAllCompanies((prev) =>
-        prev.map((c) => (c._id === id ? { ...c, isApproved: false } : c))
+        prev.map((c) => (c._id === id ? { ...c, isApproved: false } : c)),
       );
     } catch {}
   };
@@ -129,213 +134,309 @@ export default function AdminPage() {
   };
 
   if (!token) return null;
-
-  if (isAdmin === false) {
+  if (isAdmin === false)
     return (
-      <div className="mx-auto max-w-md rounded-lg border border-border bg-card p-8 text-center shadow-sm">
-        <h1 className="text-xl font-semibold text-foreground">Access denied</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+      <div className="uc p-12 max-w-sm mx-auto text-center as mt-8">
+        <p className="text-4xl mb-3">🔒</p>
+        <h1 className="text-xl font-bold text-slate-100 mb-1">Access denied</h1>
+        <p className="text-slate-500 text-sm mb-5">
           You need admin role to view this page.
         </p>
-        <Button variant="outline" className="mt-6" onClick={() => router.push("/")}>
+        <button
+          className="bg px-5 py-2 text-sm"
+          onClick={() => router.push("/")}
+        >
           Back to home
-        </Button>
+        </button>
       </div>
     );
-  }
-
-  if (loadingAuth || (isAdmin === null)) {
+  if (loadingAuth || isAdmin === null)
     return (
-      <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="flex items-center justify-center py-16 gap-2.5 text-slate-500 text-sm">
+        <span className="w-5 h-5 rounded-full border-2 border-blue-500/30 border-t-blue-400 sp" />
+        Loading…
       </div>
     );
-  }
 
   return (
-    <div className="space-y-10">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Admin
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Review vacancies, companies, and applications.
-        </p>
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 au">
+        {[
+          {
+            label: "Pending Vacancies",
+            val: pendingVacancies.length,
+            cls: "text-yellow-400",
+          },
+          {
+            label: "Pending Companies",
+            val: pendingCompanies.length,
+            cls: "text-red-400",
+          },
+          {
+            label: "All Companies",
+            val: allCompanies.length,
+            cls: "text-blue-400",
+          },
+          {
+            label: "Applications",
+            val: applications.length,
+            cls: "text-green-400",
+          },
+        ].map((s) => (
+          <div key={s.label} className="uc p-4" style={{ transition: "none" }}>
+            <p className={`text-2xl font-black ${s.cls}`}>{s.val}</p>
+            <p className="text-xs text-slate-600 mt-0.5 font-medium">
+              {s.label}
+            </p>
+          </div>
+        ))}
       </div>
 
-      {/* Vacancies to approve or reject — first and main section */}
-      <Card className="overflow-hidden border-border/80 shadow-sm">
-        <CardHeader className="bg-muted/40">
-          <CardTitle className="text-lg">Vacancies to approve or reject</CardTitle>
-          <CardDescription>
-            View details, then approve or reject each posting
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-4">
+      <div className="uc overflow-hidden au d1">
+        <div
+          className="px-5 py-4 border-b flex items-center gap-2.5"
+          style={{
+            borderColor: "rgba(59,130,246,.1)",
+            background: "rgba(59,130,246,.03)",
+          }}
+        >
+          <h2 className="font-bold text-slate-100">
+            Vacancies to approve or reject
+          </h2>
+          {pendingVacancies.length > 0 && (
+            <span className="tg tb text-[.65rem]">
+              {pendingVacancies.length}
+            </span>
+          )}
+        </div>
+        <div className="p-4 space-y-2">
           {pendingVacancies.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-border/80 py-6 text-center text-sm text-muted-foreground">
-              No pending vacancies.
+            <p
+              className="py-6 text-center text-sm text-slate-600 border border-dashed rounded-xl"
+              style={{ borderColor: "rgba(59,130,246,.12)" }}
+            >
+              ✓ No pending vacancies
             </p>
           ) : (
-            <ul className="space-y-3">
-              {pendingVacancies.map((v) => (
-                <li
-                  key={v._id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/80 bg-card p-4"
-                >
-                  <div className="min-w-0">
-                    <p className="font-medium">{v.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {v.location} · {v.category}
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 gap-2">
-                    <Link href={`/admin/vacancies/${v._id}`}>
-                      <Button size="sm" variant="outline">
-                        View
-                      </Button>
-                    </Link>
-                    <Button size="sm" onClick={() => approveVacancy(v._id)}>
-                      Approve
-                    </Button>
-                    <Button size="sm" variant="destructive" onClick={() => rejectVacancy(v._id)}>
-                      Reject
-                    </Button>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            pendingVacancies.map((v) => (
+              <div
+                key={v._id}
+                className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl"
+                style={{
+                  background: "rgba(26,41,66,.5)",
+                  border: "1px solid rgba(59,130,246,.08)",
+                }}
+              >
+                <div>
+                  <p className="font-semibold text-slate-200 text-sm">
+                    {v.title}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {v.location} · {v.category}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Link href={`/admin/vacancies/${v._id}`}>
+                    <button className="bg px-3 py-1.5 text-xs">View</button>
+                  </Link>
+                  <button
+                    onClick={() => approveVacancy(v._id)}
+                    className="bp px-3 py-1.5 text-xs"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => rejectVacancy(v._id)}
+                    className="bd px-3 py-1.5 text-xs"
+                  >
+                    Reject
+                  </button>
+                </div>
+              </div>
+            ))
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Pending companies */}
-      <Card className="overflow-hidden border-border/80 shadow-sm">
-        <CardHeader className="bg-muted/40">
-          <CardTitle className="text-lg">Pending companies</CardTitle>
-          <CardDescription>New registrations — approve or ban</CardDescription>
-        </CardHeader>
-        <CardContent className="pt-4">
+      <div className="uc overflow-hidden au d2">
+        <div
+          className="px-5 py-4 border-b flex items-center gap-2.5"
+          style={{
+            borderColor: "rgba(59,130,246,.1)",
+            background: "rgba(59,130,246,.03)",
+          }}
+        >
+          <h2 className="font-bold text-slate-100">Pending companies</h2>
+          {pendingCompanies.length > 0 && (
+            <span className="tg tr text-[.65rem]">
+              {pendingCompanies.length}
+            </span>
+          )}
+        </div>
+        <div className="p-4 space-y-2">
           {pendingCompanies.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-border/80 py-6 text-center text-sm text-muted-foreground">
-              No pending companies.
+            <p
+              className="py-6 text-center text-sm text-slate-600 border border-dashed rounded-xl"
+              style={{ borderColor: "rgba(59,130,246,.12)" }}
+            >
+              ✓ No pending companies
             </p>
           ) : (
-            <ul className="space-y-3">
-              {pendingCompanies.map((c) => (
-                <li
-                  key={c._id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/80 bg-card p-4"
-                >
-                  <div>
-                    <p className="font-medium">{c.name}</p>
-                    <p className="text-sm text-muted-foreground">{c.email}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button size="sm" onClick={() => approveCompany(c._id)}>
-                      Approve
-                    </Button>
-                    <Button size="sm" variant="destructive" onClick={() => banCompany(c._id)}>
-                      Ban
-                    </Button>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            pendingCompanies.map((c) => (
+              <div
+                key={c._id}
+                className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl"
+                style={{
+                  background: "rgba(26,41,66,.5)",
+                  border: "1px solid rgba(59,130,246,.08)",
+                }}
+              >
+                <div>
+                  <p className="font-semibold text-slate-200 text-sm">
+                    {c.name}
+                  </p>
+                  <p className="text-xs text-slate-500">{c.email}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => approveCompany(c._id)}
+                    className="bp px-3 py-1.5 text-xs"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => banCompany(c._id)}
+                    className="bd px-3 py-1.5 text-xs"
+                  >
+                    Ban
+                  </button>
+                </div>
+              </div>
+            ))
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* All companies */}
-      <Card className="overflow-hidden border-border/80 shadow-sm">
-        <CardHeader className="bg-muted/40">
-          <CardTitle className="text-lg">All companies</CardTitle>
-          <CardDescription>Approve or ban any company</CardDescription>
-        </CardHeader>
-        <CardContent className="pt-4">
+      <div className="uc overflow-hidden au d3">
+        <div
+          className="px-5 py-4 border-b"
+          style={{
+            borderColor: "rgba(59,130,246,.1)",
+            background: "rgba(59,130,246,.03)",
+          }}
+        >
+          <h2 className="font-bold text-slate-100">All companies</h2>
+        </div>
+        <div className="p-4">
           {loadingCompanies ? (
-            <p className="py-6 text-center text-sm text-muted-foreground">Loading...</p>
+            <div className="space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="sk h-14" />
+              ))}
+            </div>
           ) : allCompanies.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-border/80 py-6 text-center text-sm text-muted-foreground">
-              No companies.
+            <p className="py-6 text-center text-sm text-slate-600">
+              No companies
             </p>
           ) : (
             <>
-              <ul className="divide-y divide-border/80">
+              <div className="space-y-2">
                 {allCompanies.map((c) => (
-                  <li
+                  <div
                     key={c._id}
-                    className="flex flex-wrap items-center justify-between gap-4 py-4 first:pt-0"
+                    className="flex flex-wrap items-center justify-between gap-4 p-3.5 rounded-xl"
+                    style={{
+                      background: "rgba(26,41,66,.4)",
+                      border: "1px solid rgba(59,130,246,.07)",
+                    }}
                   >
-                    <div>
-                      <p className="font-medium">{c.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {c.email}
-                        <span
-                          className={
-                            c.isApproved
-                              ? "ml-2 text-green-600 dark:text-green-400"
-                              : "ml-2 text-amber-600 dark:text-amber-400"
-                          }
-                        >
-                          · {c.isApproved ? "Approved" : "Not approved"}
-                        </span>
-                      </p>
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-blue-400 text-sm"
+                        style={{
+                          background: "linear-gradient(135deg,#1a2942,#1e3560)",
+                          border: "1px solid rgba(59,130,246,.2)",
+                        }}
+                      >
+                        {c.name[0]?.toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-200 text-sm">
+                          {c.name}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          {c.email}{" "}
+                          <span
+                            className={`ml-1 tg text-[.62rem] ${c.isApproved ? "tg2" : "ty"}`}
+                          >
+                            {c.isApproved ? "✓ Live" : "⏳ Pending"}
+                          </span>
+                        </p>
+                      </div>
                     </div>
                     <div className="flex gap-2">
                       {!c.isApproved && (
-                        <Button size="sm" onClick={() => approveCompany(c._id)}>
+                        <button
+                          onClick={() => approveCompany(c._id)}
+                          className="bp px-3 py-1.5 text-xs"
+                        >
                           Approve
-                        </Button>
+                        </button>
                       )}
                       {c.isApproved && (
-                        <Button size="sm" variant="destructive" onClick={() => banCompany(c._id)}>
+                        <button
+                          onClick={() => banCompany(c._id)}
+                          className="bd px-3 py-1.5 text-xs"
+                        >
                           Ban
-                        </Button>
+                        </button>
                       )}
                     </div>
-                  </li>
+                  </div>
                 ))}
-              </ul>
-              <div className="mt-4 flex justify-center gap-2 border-t border-border/80 pt-4">
-                <Button
-                  variant="outline"
-                  size="sm"
+              </div>
+              <div
+                className="flex justify-center gap-2 mt-4 pt-4 border-t"
+                style={{ borderColor: "rgba(59,130,246,.08)" }}
+              >
+                <button
+                  className="bg px-4 py-1.5 text-xs"
                   disabled={companiesPage <= 1}
                   onClick={() => setCompaniesPage((p) => Math.max(1, p - 1))}
                 >
-                  Previous
-                </Button>
-                <span className="flex items-center px-4 text-sm text-muted-foreground">
+                  ← Previous
+                </button>
+                <span className="px-3 py-1.5 text-xs text-slate-500">
                   Page {companiesPage}
                 </span>
-                <Button
-                  variant="outline"
-                  size="sm"
+                <button
+                  className="bg px-4 py-1.5 text-xs"
                   disabled={allCompanies.length < companiesTake}
                   onClick={() => setCompaniesPage((p) => p + 1)}
                 >
-                  Next
-                </Button>
+                  Next →
+                </button>
               </div>
             </>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* All applications */}
-      <Card className="overflow-hidden border-border/80 shadow-sm">
-        <CardHeader className="bg-muted/40">
-          <CardTitle className="text-lg">All applications</CardTitle>
-          <CardDescription>Filter by company below</CardDescription>
-        </CardHeader>
-        <CardContent className="pt-4">
+      <div className="uc overflow-hidden au d4">
+        <div
+          className="px-5 py-4 border-b"
+          style={{
+            borderColor: "rgba(59,130,246,.1)",
+            background: "rgba(59,130,246,.03)",
+          }}
+        >
+          <h2 className="font-bold text-slate-100">All applications</h2>
+        </div>
+        <div className="p-4">
           <div className="mb-4">
-            <label className="mb-2 block text-sm font-medium text-foreground">
-              Filter by company
-            </label>
+            <label className="lbl">FILTER BY COMPANY</label>
             <select
-              className="w-full max-w-xs rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="ui max-w-xs text-sm"
               value={applicationsCompanyId}
               onChange={(e) => setApplicationsCompanyId(e.target.value)}
             >
@@ -348,49 +449,62 @@ export default function AdminPage() {
             </select>
           </div>
           {loadingApplications ? (
-            <p className="py-6 text-center text-sm text-muted-foreground">
-              Loading applications...
-            </p>
+            <div className="space-y-2">
+              {[1, 2].map((i) => (
+                <div key={i} className="sk h-16" />
+              ))}
+            </div>
           ) : applications.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-border/80 py-6 text-center text-sm text-muted-foreground">
-              No applications found.
+            <p
+              className="py-6 text-center text-sm text-slate-600 border border-dashed rounded-xl"
+              style={{ borderColor: "rgba(59,130,246,.12)" }}
+            >
+              No applications found
             </p>
           ) : (
-            <ul className="space-y-3">
+            <div className="space-y-2">
               {applications.map((app) => {
                 const user = app.userId as User;
-                const vacancy = app.vacancyId as Vacancy & { companyId?: Company };
+                const vacancy = app.vacancyId as Vacancy & {
+                  companyId?: Company;
+                };
                 const company = vacancy?.companyId as Company | undefined;
                 return (
-                  <li
+                  <div
                     key={app._id}
-                    className="rounded-lg border border-border/80 bg-card p-4"
+                    className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl"
+                    style={{
+                      background: "rgba(26,41,66,.4)",
+                      border: "1px solid rgba(59,130,246,.07)",
+                    }}
                   >
-                    <p className="font-medium">{vacancy?.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {user?.fullName} ({user?.email}) · {company?.name ?? "—"} ·{" "}
-                      {app.createdAt
-                        ? new Date(app.createdAt).toLocaleDateString()
-                        : ""}
-                    </p>
-                    <p className="mt-1 text-sm">
-                      CV:{" "}
-                      <a
-                        href={app.cvFileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline"
-                      >
-                        Open PDF
-                      </a>
-                    </p>
-                  </li>
+                    <div>
+                      <p className="font-semibold text-slate-200 text-sm">
+                        {vacancy?.title}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {user?.fullName} · {user?.email} ·{" "}
+                        {company?.name ?? "—"} ·{" "}
+                        {app.createdAt
+                          ? new Date(app.createdAt).toLocaleDateString()
+                          : ""}
+                      </p>
+                    </div>
+                    <a
+                      href={app.cvFileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg px-3.5 py-1.5 text-xs"
+                    >
+                      📄 CV
+                    </a>
+                  </div>
                 );
               })}
-            </ul>
+            </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

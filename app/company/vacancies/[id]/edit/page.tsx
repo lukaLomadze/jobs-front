@@ -102,71 +102,95 @@ export default function EditVacancyPage() {
 
   return (
     <div className="container py-8">
-      <Link href="/company" className="text-sm text-muted-foreground hover:underline">
+      <Link
+        href="/company"
+        className="text-xs text-slate-500 hover:text-blue-400 transition-colors mb-6 inline-block"
+      >
         ← Back to dashboard
       </Link>
-      <Card className="mt-4 max-w-xl">
-        <CardHeader>
-          <CardTitle>Edit vacancy</CardTitle>
-          <CardDescription>Update the vacancy details</CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" {...register("title")} />
-              {errors.title && (
-                <p className="text-sm text-red-500">{errors.title.message}</p>
+      <div className="uc mt-4 max-w-xl p-7 au">
+        <h1 className="text-xl font-extrabold text-slate-100 tracking-tight mb-1">
+          Edit vacancy
+        </h1>
+        <p className="text-slate-500 text-xs mb-6">
+          Update the vacancy details
+        </p>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <label className="lbl">JOB TITLE *</label>
+            <input className="ui" id="title" {...register("title")} />
+            {errors.title && <p className="err">⚠ {errors.title.message}</p>}
+          </div>
+          <div>
+            <label className="lbl">DESCRIPTION *</label>
+            <textarea
+              id="description"
+              className="ui min-h-[120px] resize-y"
+              {...register("description")}
+            />
+            {errors.description && (
+              <p className="err">⚠ {errors.description.message}</p>
+            )}
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="lbl">CATEGORY *</label>
+              <input className="ui" id="category" {...register("category")} />
+              {errors.category && (
+                <p className="err">⚠ {errors.category.message}</p>
               )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <textarea
-                id="description"
-                className="flex min-h-[120px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm"
-                {...register("description")}
+            <div>
+              <label className="lbl">LOCATION *</label>
+              <input className="ui" id="location" {...register("location")} />
+              {errors.location && (
+                <p className="err">⚠ {errors.location.message}</p>
+              )}
+            </div>
+          </div>
+          <div>
+            <label className="lbl">SALARY RANGE (optional)</label>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <input
+                className="ui"
+                id="salaryMin"
+                type="number"
+                {...register("salaryMin")}
               />
-              {errors.description && (
-                <p className="text-sm text-red-500">{errors.description.message}</p>
+              <input
+                className="ui"
+                id="salaryMax"
+                type="number"
+                {...register("salaryMax")}
+              />
+            </div>
+          </div>
+          <div className="h-px" style={{ background: "rgba(59,130,246,.1)" }} />
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              disabled={loading}
+              className="bp flex-1 py-3 text-sm"
+            >
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white sp" />
+                  Saving…
+                </>
+              ) : (
+                "Save →"
               )}
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Input id="category" {...register("category")} />
-                {errors.category && (
-                  <p className="text-sm text-red-500">{errors.category.message}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
-                <Input id="location" {...register("location")} />
-                {errors.location && (
-                  <p className="text-sm text-red-500">{errors.location.message}</p>
-                )}
-              </div>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="salaryMin">Min salary</Label>
-                <Input id="salaryMin" type="number" {...register("salaryMin")} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="salaryMax">Max salary</Label>
-                <Input id="salaryMax" type="number" {...register("salaryMax")} />
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex gap-2">
-            <Button type="submit" disabled={loading}>
-              {loading ? "Saving..." : "Save"}
-            </Button>
-            <Button type="button" variant="destructive" onClick={handleDelete}>
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="bd px-5 py-3 text-sm"
+            >
               Delete
-            </Button>
-          </CardFooter>
+            </button>
+          </div>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }

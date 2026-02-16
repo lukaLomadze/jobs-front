@@ -65,69 +65,130 @@ export default function SignUpCompanyPage() {
 
   return (
     <div className="container flex min-h-[80vh] items-center justify-center py-8">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Register your company</CardTitle>
-          <CardDescription>
-            Your company will be reviewed by admin before you can post jobs
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="companyName">Company name</Label>
-              <Input id="companyName" {...register("companyName")} placeholder="Acme Inc" />
+      <div className="w-full max-w-md as">
+        <div className="text-center mb-7">
+          <h1 className="text-2xl font-extrabold text-slate-100 tracking-tight">
+            Register your company
+          </h1>
+          <p className="text-slate-500 text-sm mt-1">
+            Reviewed by admin before you can post jobs
+          </p>
+        </div>
+        <div className="uc p-7">
+          <div
+            className="flex items-center gap-2.5 p-3.5 rounded-xl mb-5"
+            style={{
+              background: "rgba(234,179,8,.07)",
+              border: "1px solid rgba(234,179,8,.2)",
+            }}
+          >
+            <span className="text-yellow-400">⚠️</span>
+            <p className="text-yellow-400 text-xs font-semibold">
+              Admin approval required before posting jobs
+            </p>
+          </div>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <label className="lbl">COMPANY NAME</label>
+              <input
+                className="ui"
+                id="companyName"
+                placeholder="Acme Inc"
+                {...register("companyName")}
+              />
               {errors.companyName && (
-                <p className="text-sm text-red-500">{errors.companyName.message}</p>
+                <p className="err">⚠ {errors.companyName.message}</p>
               )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Description (optional)</Label>
-              <Input id="description" {...register("description")} placeholder="What we do" />
+            <div>
+              <label className="lbl">DESCRIPTION (optional)</label>
+              <input
+                className="ui"
+                id="description"
+                placeholder="What we do"
+                {...register("description")}
+              />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Company email</Label>
-              <Input id="email" type="email" {...register("email")} placeholder="contact@acme.com" />
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message}</p>
-              )}
+            <div>
+              <label className="lbl">COMPANY EMAIL</label>
+              <input
+                className="ui"
+                id="email"
+                type="email"
+                placeholder="contact@acme.com"
+                {...register("email")}
+              />
+              {errors.email && <p className="err">⚠ {errors.email.message}</p>}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone (optional)</Label>
-              <Input id="phone" {...register("phone")} placeholder="+995..." />
+            <div>
+              <label className="lbl">PHONE (optional)</label>
+              <input
+                className="ui"
+                id="phone"
+                placeholder="+995…"
+                {...register("phone")}
+              />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="website">Website (optional)</Label>
-              <Input id="website" {...register("website")} placeholder="https://..." />
+            <div>
+              <label className="lbl">WEBSITE (optional)</label>
+              <input
+                className="ui"
+                id="website"
+                placeholder="https://…"
+                {...register("website")}
+              />
               {errors.website && (
-                <p className="text-sm text-red-500">{errors.website.message}</p>
+                <p className="err">⚠ {errors.website.message}</p>
               )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="fullName">Your full name</Label>
-              <Input id="fullName" {...register("fullName")} placeholder="John Doe" />
+            <div>
+              <label className="lbl">YOUR FULL NAME</label>
+              <input
+                className="ui"
+                id="fullName"
+                placeholder="John Doe"
+                {...register("fullName")}
+              />
               {errors.fullName && (
-                <p className="text-sm text-red-500">{errors.fullName.message}</p>
+                <p className="err">⚠ {errors.fullName.message}</p>
               )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" {...register("password")} />
+            <div>
+              <label className="lbl">PASSWORD</label>
+              <input
+                className="ui"
+                id="password"
+                type="password"
+                placeholder="Min 6 characters"
+                {...register("password")}
+              />
               {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message}</p>
+                <p className="err">⚠ {errors.password.message}</p>
               )}
             </div>
-          </CardContent>
-          <CardFooter className="flex flex-col gap-2">
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Registering..." : "Register company"}
-            </Button>
-            <Link href="/auth/sign-up" className="text-sm text-muted-foreground underline">
-              Back to sign up options
-            </Link>
-          </CardFooter>
-        </form>
-      </Card>
+            <button
+              type="submit"
+              disabled={loading}
+              className="bp w-full py-3 text-sm mt-1"
+            >
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white sp" />
+                  Registering…
+                </>
+              ) : (
+                "Register company →"
+              )}
+            </button>
+          </form>
+          <Link
+            href="/auth/sign-up"
+            className="block text-center text-xs text-slate-600 hover:text-slate-400 mt-4"
+          >
+            ← Back to options
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

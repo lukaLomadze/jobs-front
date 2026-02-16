@@ -66,69 +66,104 @@ export default function NewVacancyPage() {
 
   return (
     <div className="container py-8">
-      <Link href="/company" className="text-sm text-muted-foreground hover:underline">
+      <Link
+        href="/company"
+        className="text-xs text-slate-500 hover:text-blue-400 transition-colors mb-6 inline-block"
+      >
         ← Back to dashboard
       </Link>
-      <Card className="mt-4 max-w-xl">
-        <CardHeader>
-          <CardTitle>New vacancy</CardTitle>
-          <CardDescription>Vacancy will be pending until admin approves</CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" {...register("title")} placeholder="Job title" />
-              {errors.title && (
-                <p className="text-sm text-red-500">{errors.title.message}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <textarea
-                id="description"
-                className="flex min-h-[120px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm"
-                {...register("description")}
-                placeholder="Full description"
+      <div className="uc mt-4 max-w-xl p-7 au">
+        <h1 className="text-xl font-extrabold text-slate-100 tracking-tight mb-1">
+          New vacancy
+        </h1>
+        <p className="text-slate-500 text-xs mb-6">
+          Vacancy will be pending until admin approves
+        </p>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <label className="lbl">JOB TITLE *</label>
+            <input
+              className="ui"
+              id="title"
+              placeholder="Job title"
+              {...register("title")}
+            />
+            {errors.title && <p className="err">⚠ {errors.title.message}</p>}
+          </div>
+          <div>
+            <label className="lbl">DESCRIPTION *</label>
+            <textarea
+              id="description"
+              className="ui min-h-[120px] resize-y"
+              placeholder="Full description"
+              {...register("description")}
+            />
+            {errors.description && (
+              <p className="err">⚠ {errors.description.message}</p>
+            )}
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="lbl">CATEGORY *</label>
+              <input
+                className="ui"
+                id="category"
+                placeholder="e.g. IT"
+                {...register("category")}
               />
-              {errors.description && (
-                <p className="text-sm text-red-500">{errors.description.message}</p>
+              {errors.category && (
+                <p className="err">⚠ {errors.category.message}</p>
               )}
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Input id="category" {...register("category")} placeholder="e.g. IT" />
-                {errors.category && (
-                  <p className="text-sm text-red-500">{errors.category.message}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
-                <Input id="location" {...register("location")} placeholder="e.g. Tbilisi" />
-                {errors.location && (
-                  <p className="text-sm text-red-500">{errors.location.message}</p>
-                )}
-              </div>
+            <div>
+              <label className="lbl">LOCATION *</label>
+              <input
+                className="ui"
+                id="location"
+                placeholder="e.g. Tbilisi"
+                {...register("location")}
+              />
+              {errors.location && (
+                <p className="err">⚠ {errors.location.message}</p>
+              )}
             </div>
+          </div>
+          <div>
+            <label className="lbl">SALARY RANGE (optional)</label>
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="salaryMin">Min salary (optional)</Label>
-                <Input id="salaryMin" type="number" {...register("salaryMin")} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="salaryMax">Max salary (optional)</Label>
-                <Input id="salaryMax" type="number" {...register("salaryMax")} />
-              </div>
+              <input
+                className="ui"
+                id="salaryMin"
+                type="number"
+                placeholder="Min"
+                {...register("salaryMin")}
+              />
+              <input
+                className="ui"
+                id="salaryMax"
+                type="number"
+                placeholder="Max"
+                {...register("salaryMax")}
+              />
             </div>
-          </CardContent>
-          <CardFooter>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create vacancy"}
-            </Button>
-          </CardFooter>
+          </div>
+          <div className="h-px" style={{ background: "rgba(59,130,246,.1)" }} />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bp w-full py-3 text-sm"
+          >
+            {loading ? (
+              <>
+                <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white sp" />
+                Creating…
+              </>
+            ) : (
+              "Create vacancy →"
+            )}
+          </button>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }
